@@ -1,9 +1,39 @@
 # RUN: python3 motion_sensor.py
+# RUN DISCORD BOT: bot.run(bot_token)
+
 
 import RPi.GPIO as GPIO
 import time
 import subprocess
 import os
+
+import RPi.GPIO as GPIO
+import time
+import subprocess
+import discord
+from discord.ext import commands
+import dotenv
+import os
+
+dotenv.load_dotenv()
+#bot_token = "BOT_TOKEN"
+bot_token = os.getenv("DISCORD_TOKEN")
+bot = commands.Bot(command_prefix='!')
+
+
+def snimi_sliku():
+    subprocess.run(["fswebcam", "-r", "1280x720", "--no-banner", putanja_slike])
+
+
+@bot.command()
+async def capture(ctx):
+    snimi_sliku(ctx)
+    with open(putanja_slike, "rb") as file:
+        picture = discord.File(file)
+        await ctx.send(file=picture)
+
+
+
 
 # Postavi GPIO način rada
 GPIO.setmode(GPIO.BCM)
