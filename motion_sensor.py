@@ -1,6 +1,5 @@
 # RUN: python3 motion_sensor.py
 
-
 import RPi.GPIO as GPIO
 import time
 import subprocess
