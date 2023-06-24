@@ -1,25 +1,28 @@
+# RUN: python3 motion_sensor.py
 
 import RPi.GPIO as GPIO
 import time
 
+# Postavi GPIO način rada
 GPIO.setmode(GPIO.BCM)
 
-# Konfiguracija PIR senzora pokreta
-PIR_PIN = 17
-GPIO.setup(PIR_PIN, GPIO.IN)
+# Onemogući GPIO upozorenja
+GPIO.setwarnings(False)
 
-# Konfiguracija LED diode
-LED_PIN = 18
-GPIO.setup(LED_PIN, GPIO.OUT)
+# Odredi GPIO pin koji je povezan sa PIR senzorom
+pir_pin = 17
+
+# Postavi GPIO pin
+GPIO.setup(pir_pin, GPIO.IN)
 
 try:
     while True:
-        if GPIO.input(PIR_PIN):
+        if GPIO.input(pir_pin):
             print("Detektirano kretanje!")
-            GPIO.output(LED_PIN, GPIO.HIGH)  # Uključi LED
-            time.sleep(1)  # LED uključena 1 sekundu
-            GPIO.output(LED_PIN, GPIO.LOW)  # Isključi LED
-        time.sleep(0.1)  # Kratka pauza kako bi se izbjeglo pretjerano otkrivanje
+        else:
+            print("Nema detektiranog kretanja.")
+        time.sleep(0.1)
 
 except KeyboardInterrupt:
     GPIO.cleanup()
+
