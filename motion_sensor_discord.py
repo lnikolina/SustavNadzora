@@ -40,6 +40,13 @@ async def motion_detection():
     while True:
         if GPIO.input(pir_pin):
             print("Motion detected")
+
+            dummy_data = {
+                'id': 1234567890,  # proizvoljni ID
+                'channel_id': target_channel_id,
+                'author': discord.Object(id=bot.user.id),  # lažni autor poruke
+                'content': '',  # prazan sadržaj poruke
+            }
             dummy_message = discord.Message(channel=None, data={}, state=None)
             await bot.process_commands(dummy_message)
         else:
