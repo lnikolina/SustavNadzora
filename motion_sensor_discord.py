@@ -30,6 +30,7 @@ def snimi_sliku():
 intents = discord.Intents.default()
 intents.typing = False
 intents.presences = False
+intents.messages = True
 
 bot = commands.Bot(command_prefix='!', intents=intents)
 
