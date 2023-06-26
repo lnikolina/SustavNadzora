@@ -40,7 +40,8 @@ async def motion_detection():
     while True:
         if GPIO.input(pir_pin):
             print("Motion detected")
-            await bot.process_commands()
+            dummy_message = discord.Message(channel=None, data={}, state=None)
+            await bot.process_commands(dummy_message)
         else:
             print("No motion detected")
         await asyncio.sleep(1)  
