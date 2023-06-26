@@ -12,6 +12,7 @@ import subprocess
 dotenv.load_dotenv()
 bot_token = os.getenv("DISCORD_TOKEN")
 
+
 # Postavite GPIO način rada
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -26,7 +27,11 @@ zadnja_detekcija = 0
 def snimi_sliku():
     subprocess.run(["fswebcam", "-r", "1280x720", "--no-banner", putanja_slike])
 
-bot = commands.Bot(command_prefix='!')
+intents = discord.Intents.default()
+intents.typing = False
+intents.presences = False
+
+bot = commands.Bot(command_prefix='!', intents=intents)
 
 @bot.command()
 async def capture(ctx):
@@ -45,4 +50,4 @@ async def capture(ctx):
 async def on_ready():
     print(f'Bot je prijavljen kao {bot.user.name}')
 
-bot.run(bot_token)
+bot.run(bot_token, reconnect=True)
