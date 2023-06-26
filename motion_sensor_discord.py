@@ -34,7 +34,7 @@ intents.messages = True
 
 bot = commands.Bot(command_prefix='!', intents=intents)
 
-target_channel_id = 1122952677765173430 # Zamijenite s ID-em ciljnog kanala
+target_channel_id = 1122952677765173430 # ID ciljnog kanala
 
 @bot.command()
 async def capture(ctx):
@@ -45,10 +45,12 @@ async def capture(ctx):
             snimi_sliku()
             with open(putanja_slike, "rb") as file:
                 picture = discord.File(file)
+                zadnja_detekcija = trenutno_vrijeme
                 await target_channel.send("Detektirano kretanje!")
                 await target_channel.send(file=picture)
-            zadnja_detekcija = trenutno_vrijeme
+            
     else:
+        print("Upozorenje! Nema detekcije kretanja.")
         await ctx.send("Nema detektiranog kretanja.")
 
 @bot.event
