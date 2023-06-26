@@ -1,4 +1,4 @@
-# RUN: python3 motion_sensor_discord.py
+# python3 motion_sensor_discord.py
 
 import discord
 from discord.ext import commands
@@ -33,15 +33,19 @@ intents.presences = False
 
 bot = commands.Bot(command_prefix='!', intents=intents)
 
+target_channel_id = 1122952677765173430 # Zamijenite s ID-em ciljnog kanala
+
 @bot.command()
 async def capture(ctx):
+    target_channel = bot.get_channel(target_channel_id)
     if GPIO.input(pir_pin):
         trenutno_vrijeme = time.time()
         if trenutno_vrijeme - zadnja_detekcija >= vremenski_razmak:
             snimi_sliku()
             with open(putanja_slike, "rb") as file:
                 picture = discord.File(file)
-                await ctx.send(file=picture)
+                await target_channel.send("Detektirano kretanje!")
+                await target_channel.send(file=picture)
             zadnja_detekcija = trenutno_vrijeme
     else:
         await ctx.send("Nema detektiranog kretanja.")
