@@ -7,11 +7,11 @@ import dotenv
 import RPi.GPIO as GPIO
 import time
 import subprocess
+import asyncio
 
 # Učitajte token bota iz .env datoteke
 dotenv.load_dotenv()
 bot_token = os.getenv("DISCORD_TOKEN")
-
 
 # Postavite GPIO način rada
 GPIO.setmode(GPIO.BCM)
@@ -36,6 +36,14 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 
 target_channel_id = 1122952677765173430 # ID ciljnog kanala
 
+async def motion_detection():
+    while True:
+        if GPIO.input(pir_pin):
+            print("Motion detected")
+        else:
+            print("No motion detected")
+        await asyncio.sleep(1)  # Adjust the delay as needed
+
 @bot.command()
 async def capture(ctx):
     target_channel = bot.get_channel(target_channel_id)
@@ -56,5 +64,9 @@ async def capture(ctx):
 @bot.event
 async def on_ready():
     print(f'Bot je prijavljen kao {bot.user.name}')
+    bot.loop.create_task(motion_detection())
 
-bot.run(bot_token, reconnect=True)
+async def main():
+    await bot.start(bot_token)
+
+asyncio.run(main())
