@@ -40,12 +40,14 @@ async def motion_detection():
     while True:
         if GPIO.input(pir_pin):
             print("Motion detected")
+            await bot.process_commands()
         else:
             print("No motion detected")
-        await asyncio.sleep(1)  # Adjust the delay as needed
+        await asyncio.sleep(1)  
 
 @bot.command()
 async def capture(ctx):
+    global zadnja_detekcija
     target_channel = bot.get_channel(target_channel_id)
     if GPIO.input(pir_pin):
         trenutno_vrijeme = time.time()
@@ -54,9 +56,12 @@ async def capture(ctx):
             with open(putanja_slike, "rb") as file:
                 picture = discord.File(file)
                 zadnja_detekcija = trenutno_vrijeme
+                print("Slika snimljena.")
                 await target_channel.send("Detektirano kretanje!")
                 await target_channel.send(file=picture)
-            
+                print("Slika poslana na Discord.")
+        else:
+            print("Previše brzo detektiranje kretanja.")
     else:
         print("Upozorenje! Nema detekcije kretanja.")
         await ctx.send("Nema detektiranog kretanja.")
