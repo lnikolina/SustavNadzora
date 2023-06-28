@@ -36,23 +36,6 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 
 target_channel_id = 1122952677765173430 # ID ciljnog kanala
 
-async def motion_detection():
-    while True:
-        if GPIO.input(pir_pin):
-            print("Motion detected")
-
-            dummy_data = {
-                'id': 1234567890,  # proizvoljni ID
-                'channel_id': target_channel_id,
-                'author': discord.Object(id=bot.user.id),  # lažni autor poruke
-                'content': '',  # prazan sadržaj poruke
-            }
-            dummy_message = discord.Message(channel=None, data={}, state=None)
-            await bot.process_commands(dummy_message)
-        else:
-            print("No motion detected")
-        await asyncio.sleep(1)  
-
 @bot.command()
 async def capture(ctx):
     global zadnja_detekcija
@@ -74,6 +57,14 @@ async def capture(ctx):
         print("Upozorenje! Nema detekcije kretanja.")
         await ctx.send("Nema detektiranog kretanja.")
 
+async def motion_detection():
+    while True:
+        if GPIO.input(pir_pin):
+            print("Motion detected")
+        else:
+            print("No motion detected")
+        await asyncio.sleep(1)
+
 @bot.event
 async def on_ready():
     print(f'Bot je prijavljen kao {bot.user.name}')
@@ -81,5 +72,6 @@ async def on_ready():
 
 async def main():
     await bot.start(bot_token)
+    await bot.close()
 
 asyncio.run(main())
