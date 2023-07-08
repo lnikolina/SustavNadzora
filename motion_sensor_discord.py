@@ -22,12 +22,17 @@ vremenski_razmak = 5
 zadnja_detekcija = 0
 
 def snimi_sliku():
-    result = subprocess.run(["fswebcam", "-r", "1280x720", "--no-banner", putanja_slike], capture_output=True)
+    result = subprocess.run(
+        ["fswebcam", "-r", "1280x720", "--no-banner", putanja_slike],
+        capture_output=True,
+        text=True,
+        stderr=subprocess.PIPE
+    )
     if result.returncode == 0:
         print("Slika snimljena.")
     else:
         print("Greška prilikom snimanja slike:")
-        print(result.stderr.decode('utf-8'))
+        print(result.stderr)
 
 intents = discord.Intents.default()
 intents.typing = False
