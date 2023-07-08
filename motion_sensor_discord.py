@@ -1,4 +1,4 @@
-# python3 motion_sensor_discord.py
+#python3 motion_sensor_discord.py
 
 import discord
 from discord.ext import commands
@@ -60,6 +60,7 @@ async def capture(ctx):
                 print("Slika poslana na Discord.")
         else:
             print("Previše brzo detektiranje kretanja.")
+            await ctx.send("Previše brzo detektiranje kretanja.")
     else:
         print("Upozorenje! Nema detekcije kretanja.")
         await ctx.send("Nema detektiranog kretanja.")
@@ -75,10 +76,13 @@ async def motion_detection():
 @bot.event
 async def on_ready():
     print(f'Bot je prijavljen kao {bot.user.name}')
+    print(f'Povezan na Discord kao {bot.user.name}')
+    print('Čeka se detekcija pokreta...')
     bot.loop.create_task(motion_detection())
 
 async def main():
     await bot.start(bot_token)
     await bot.close()
+
 
 asyncio.run(main())
