@@ -9,11 +9,9 @@ import time
 import subprocess
 import asyncio
 
-# Učitajte token bota iz .env datoteke
 dotenv.load_dotenv()
 bot_token = os.getenv("DISCORD_TOKEN")
 
-# Postavite GPIO način rada
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 pir_pin = 17
@@ -23,9 +21,13 @@ putanja_slike = "/tmp/slika.jpg"
 vremenski_razmak = 5
 zadnja_detekcija = 0
 
-# Funkcija za snimanje slike s USB kamere
 def snimi_sliku():
-    subprocess.run(["fswebcam", "-r", "1280x720", "--no-banner", putanja_slike])
+    result = subprocess.run(["fswebcam", "-r", "1280x720", "--no-banner", putanja_slike], capture_output=True)
+    if result.returncode == 0:
+        print("Slika snimljena.")
+    else:
+        print("Greška prilikom snimanja slike:")
+        print(result.stderr.decode('utf-8'))
 
 intents = discord.Intents.default()
 intents.typing = False
@@ -34,7 +36,7 @@ intents.messages = True
 
 bot = commands.Bot(command_prefix='!', intents=intents)
 
-target_channel_id = 1122952677765173430 # ID ciljnog kanala
+target_channel_id = 1122952677765173430
 
 @bot.command()
 async def capture(ctx):
@@ -60,9 +62,9 @@ async def capture(ctx):
 async def motion_detection():
     while True:
         if GPIO.input(pir_pin):
-            print("Motion detected")
+            print("Detektiran pokret.")
         else:
-            print("No motion detected")
+            print("Nema detekcije.")
         await asyncio.sleep(1)
 
 @bot.event
