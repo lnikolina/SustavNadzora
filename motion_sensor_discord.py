@@ -28,7 +28,7 @@ def snimi_sliku():
         ["fswebcam", "-r", "1280x720", "--no-banner", putanja_slike],
         capture_output=True,
         text=True,
-        stderr=subprocess.PIPE
+        
     )
     if result.returncode == 0:
         print("Slika snimljena.")
@@ -39,7 +39,7 @@ def snimi_sliku():
 def posalji_email():
     msg = MIMEMultipart()
     msg['From'] = gmail_user
-    msg['To'] = 'nikolina.lekaj.tkt99@example.com'  # recipient's email address
+    msg['To'] = 'nikolina.lekaj.tkt99@gmail.com'  # recipient's email address
     msg['Subject'] = 'Detektirano kretanje!'
     body = "Detektirano je kretanje. Pogledaj priloženu sliku."
     msg.attach(MIMEText(body, 'plain'))
@@ -58,6 +58,7 @@ def posalji_email():
         print(f"Greška prilikom slanja emaila: {e}")
 
 async def motion_detection():
+    global zadnja_detekcija
     while True:
         if GPIO.input(pir_pin):
             print("Detektiran pokret.")
