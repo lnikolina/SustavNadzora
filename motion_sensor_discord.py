@@ -1,16 +1,18 @@
-#python3 motion_sensor_discord.py
+# python3 motion_sensor_discord.py
 
-import discord
-from discord.ext import commands
 import os
-import dotenv
 import RPi.GPIO as GPIO
 import time
 import subprocess
 import asyncio
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
 
-dotenv.load_dotenv()
-bot_token = os.getenv("DISCORD_TOKEN")
+# Gmail account credentials
+gmail_user = 'motion.detector2023@gmail.com'
+gmail_password = 'motiondetector18'
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -34,55 +36,42 @@ def snimi_sliku():
         print("Greška prilikom snimanja slike:")
         print(result.stderr)
 
-intents = discord.Intents.default()
-intents.typing = False
-intents.presences = False
-intents.messages = True
+def posalji_email():
+    msg = MIMEMultipart()
+    msg['From'] = gmail_user
+    msg['To'] = 'nikolina.lekaj.tkt99@example.com'  # recipient's email address
+    msg['Subject'] = 'Detektirano kretanje!'
+    body = "Detektirano je kretanje. Pogledaj priloženu sliku."
+    msg.attach(MIMEText(body, 'plain'))
+    with open(putanja_slike, "rb") as file:
+        img = MIMEImage(file.read(), name=os.path.basename(putanja_slike))
+        msg.attach(img)
 
-bot = commands.Bot(command_prefix='!', intents=intents)
-
-target_channel_id = 1122952677765173430
-
-@bot.command()
-async def capture(ctx):
-    global zadnja_detekcija
-    target_channel = bot.get_channel(target_channel_id)
-    if GPIO.input(pir_pin):
-        trenutno_vrijeme = time.time()
-        if trenutno_vrijeme - zadnja_detekcija >= vremenski_razmak:
-            snimi_sliku()
-            with open(putanja_slike, "rb") as file:
-                picture = discord.File(file)
-                zadnja_detekcija = trenutno_vrijeme
-                print("Slika snimljena.")
-                await target_channel.send("Detektirano kretanje!")
-                await target_channel.send(file=picture)
-                print("Slika poslana na Discord.")
-        else:
-            print("Previše brzo detektiranje kretanja.")
-            await ctx.send("Previše brzo detektiranje kretanja.")
-    else:
-        print("Upozorenje! Nema detekcije kretanja.")
-        await ctx.send("Nema detektiranog kretanja.")
+    try:
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(gmail_user, gmail_password)
+        server.sendmail(gmail_user, msg['To'], msg.as_string())
+        server.quit()
+        print("Slika poslana na email.")
+    except Exception as e:
+        print(f"Greška prilikom slanja emaila: {e}")
 
 async def motion_detection():
     while True:
         if GPIO.input(pir_pin):
             print("Detektiran pokret.")
+            trenutno_vrijeme = time.time()
+            if trenutno_vrijeme - zadnja_detekcija >= vremenski_razmak:
+                snimi_sliku()
+                posalji_email()
+                zadnja_detekcija = trenutno_vrijeme
         else:
             print("Nema detekcije.")
         await asyncio.sleep(1)
 
-@bot.event
-async def on_ready():
-    print(f'Bot je prijavljen kao {bot.user.name}')
-    print(f'Povezan na Discord kao {bot.user.name}')
-    print('Čeka se detekcija pokreta...')
-    bot.loop.create_task(motion_detection())
-
 async def main():
-    await bot.start(bot_token)
-    await bot.close()
+    await motion_detection()
 
-
-asyncio.run(main())
+if __name__ == "__main__":
+    asyncio.run(main())
