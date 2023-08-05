@@ -66,9 +66,7 @@ def posalji_email():
     with open(putanja_slike, "rb") as file:
         img = MIMEImage(file.read(), name=os.path.basename(putanja_slike))
         msg.attach(img)
-
-
-
+ 
 
     try:
         server = smtplib.SMTP('smtp.gmail.com', 587)
