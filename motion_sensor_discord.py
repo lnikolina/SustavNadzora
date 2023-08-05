@@ -6,13 +6,25 @@ import time
 import subprocess
 import asyncio
 import smtplib
+
+
+
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 
-# Gmail account credentials
+
+
+# Gmail account 
 gmail_user = 'motion.detector2023@gmail.com'
 gmail_password = 'motiondetector18'
+
+"""
+# Google API 
+client_id = '266210756704-fsl0rb1760c2inkgo31e5vlu2gm7puen.apps.googleusercontent.com'
+client_secret = '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'
+refresh_token = 'YOUR_REFRESH_TOKEN'
+"""
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -38,7 +50,7 @@ def snimi_sliku():
 
 def posalji_email():
     msg = MIMEMultipart()
-    msg['From'] = gmail_user
+    msg['From'] = 'motion.detector2023@gmail.com'
     msg['To'] = 'nikolina.lekaj.tkt99@gmail.com'  # recipient's email address
     msg['Subject'] = 'Detektirano kretanje!'
     body = "Detektirano je kretanje. Pogledaj priloženu sliku."
@@ -46,6 +58,9 @@ def posalji_email():
     with open(putanja_slike, "rb") as file:
         img = MIMEImage(file.read(), name=os.path.basename(putanja_slike))
         msg.attach(img)
+
+
+
 
     try:
         server = smtplib.SMTP('smtp.gmail.com', 587)
@@ -76,3 +91,32 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
+"""
+
+try:
+        # OAuth2 authentication
+        creds = Credentials.from_authorized_user_info(
+            {
+                "client_id": client_id,
+                "client_secret": client_secret,
+                "token": {
+                    "refresh_token": refresh_token,
+                    "token_uri": "https://oauth2.googleapis.com/token",
+                    "client_id": client_id,
+                    "client_secret": client_secret,
+                }
+            }
+        )
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()
+            server.login(creds=creds)
+            server.sendmail(msg['From'], msg['To'], msg.as_string())
+        print("Email sent successfully.")
+    except Exception as e:
+        print(f"Error sending email: {e}")
+
+if __name__ == "__main__":
+    send_email()
+
+"""  
