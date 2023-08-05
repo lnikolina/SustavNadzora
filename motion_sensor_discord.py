@@ -7,13 +7,21 @@ import subprocess
 import asyncio
 import smtplib
 
-
+import base64
+import re
+import mimetypes
 
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 
-
+from google.auth.transport.requests import Request
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+from google.oauth2.credentials import Credentials
+from email.mime.base import MIMEBase
+from email import encoders
 
 # Gmail account 
 gmail_user = 'motion.detector2023@gmail.com'
