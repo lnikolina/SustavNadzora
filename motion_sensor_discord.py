@@ -25,7 +25,7 @@ from email import encoders
 
 # Gmail account 
 gmail_user = 'motion.detector2023@gmail.com'
-gmail_password = 'motiondetector18'
+gmail_password = 'yora zwqx sujn mxof'
 
 """
 # Google API 
