@@ -1,4 +1,4 @@
-# python3 motion_sensor_discord.py
+# python3 motion_sensor.py
 
 import os
 import RPi.GPIO as GPIO
@@ -7,32 +7,14 @@ import subprocess
 import asyncio
 import smtplib
 
-import base64
-import re
-import mimetypes
-
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 
-from google.auth.transport.requests import Request
-from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
-from google.oauth2.credentials import Credentials
-from email.mime.base import MIMEBase
-from email import encoders
 
 # Gmail account 
 gmail_user = 'motion.detector2023@gmail.com'
 gmail_password = 'yora zwqx sujn mxof'
-
-"""
-# Google API 
-client_id = '266210756704-fsl0rb1760c2inkgo31e5vlu2gm7puen.apps.googleusercontent.com'
-client_secret = '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'
-refresh_token = 'YOUR_REFRESH_TOKEN'
-"""
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -98,31 +80,3 @@ async def main():
 if __name__ == "__main__":
     asyncio.run(main())
 
-"""
-
-try:
-        # OAuth2 authentication
-        creds = Credentials.from_authorized_user_info(
-            {
-                "client_id": client_id,
-                "client_secret": client_secret,
-                "token": {
-                    "refresh_token": refresh_token,
-                    "token_uri": "https://oauth2.googleapis.com/token",
-                    "client_id": client_id,
-                    "client_secret": client_secret,
-                }
-            }
-        )
-        with smtplib.SMTP('smtp.gmail.com', 587) as server:
-            server.starttls()
-            server.login(creds=creds)
-            server.sendmail(msg['From'], msg['To'], msg.as_string())
-        print("Email sent successfully.")
-    except Exception as e:
-        print(f"Error sending email: {e}")
-
-if __name__ == "__main__":
-    send_email()
-
-"""  
